@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <PID_v1.h>
 
 // Based on the code showcased in EEEnthusiast
 
@@ -16,17 +17,29 @@
 #define in3  7
 #define in4  6
 
+
 long accelX, accelY, accelZ;
-float gX, gY, gZ;
+double gX, gY, gZ;
 
 long gyroX, gyroY, gyroZ;
-float rotX, rotY, rotZ;
+double rotX, rotY, rotZ;
+
+
+// setup PID
+
+double Input, Output, target
+
+
+PID car(&Input, &Output, &target ,2,5,1, DIRECT);
+
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   Wire.begin();
   initMPU();
+  target = centerpoint();
+  car.SetMode(automatic);
 
 }
 
@@ -36,14 +49,18 @@ void loop() {
   recordAccelRegisters();
   recordGyroRegisters();
 
+  Input = gX;
+  car.Compute();
+  
+
   if (gX > 0)
   {
-    forward(round(gX*255));
+    forward(Output);
   }
 
   else
   {
-    backward(abs(round(gX*255)));
+    backward(Output);
   }
   
 
@@ -133,4 +150,21 @@ void forward(int spid)
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
   analogWrite(enB, spid);
+}
+
+double centerpoint()
+{
+  long sum_gx = 0;
+  int counter = 0;
+  while (counter < 100)
+  {
+    recordAccelRegisters();
+    sum_gx += accelX;
+    delay(100);
+    counter++;
+  }
+  double  average = sum_gx / counter;
+  double targ = average/16384.0;
+  return targ;
+  
 }
