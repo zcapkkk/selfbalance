@@ -27,7 +27,7 @@ double rotX, rotY, rotZ;
 
 // setup PID
 
-double Input, Output, target
+double Input, Output, target;
 
 
 PID car(&Input, &Output, &target ,2,5,1, DIRECT);
@@ -39,7 +39,7 @@ void setup() {
   Wire.begin();
   initMPU();
   target = centerpoint();
-  car.SetMode(automatic);
+  car.SetMode(AUTOMATIC);
 
 }
 
