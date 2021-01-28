@@ -30,15 +30,20 @@ double rotX, rotY, rotZ;
 double Input, Output, target;
 
 
-PID car(&Input, &Output, &target ,2,5,1, DIRECT);
+PID car(&Input, &Output, &target ,0.2,0.5,1, DIRECT);
 
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  Serial.println("Initialize...");
   Wire.begin();
   initMPU();
   target = centerpoint();
+  Serial.println("Calibration complete.");
+  Serial.println("Target: ");
+  Serial.println(target);
+  
   car.SetMode(AUTOMATIC);
 
 }
@@ -48,6 +53,10 @@ void loop() {
 
   recordAccelRegisters();
   recordGyroRegisters();
+  Serial.print("gx: ");
+  Serial.println(gX);
+  Serial.print("   ");
+  
 
   Input = gX;
   car.Compute();
@@ -62,8 +71,9 @@ void loop() {
   {
     backward(Output);
   }
-  
-
+  Serial.print("Output: ");
+  Serial.print(Output);
+  Serial.print("\n");
   delay(50);
 
 }
