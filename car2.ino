@@ -43,6 +43,7 @@ void setup() {
   Serial.println("Calibration complete.");
   Serial.println("Target: ");
   Serial.println(target);
+  delay(3000);
   
   car.SetMode(AUTOMATIC);
 
